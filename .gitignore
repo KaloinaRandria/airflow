@@ -1,0 +1,5 @@
+/airflow_env
+/logs
+simple_auth_manager_passwords.json.generated
+airflow.cfg
+airflow.db
