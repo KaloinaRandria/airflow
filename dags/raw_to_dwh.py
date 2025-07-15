@@ -60,6 +60,13 @@ DWH_DDL = {
             method             VARCHAR(50)
         );
     """,
+     "dim_region": """
+        CREATE TABLE IF NOT EXISTS ecommerce_dwh_star.dim_region (
+            region_key INT,
+            region_id INT,
+            name           VARCHAR(255)
+        );
+    """,
     "fact_sales": """
         CREATE TABLE IF NOT EXISTS ecommerce_dwh_star.fact_sales (
             sale_key           INT,

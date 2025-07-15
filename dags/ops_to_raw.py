@@ -48,6 +48,13 @@ RAW_TABLE_SCHEMAS = {
                      total_amount   TEXT
                  );
                  """,
+    'region_raw': """
+                 CREATE TABLE IF NOT EXISTS raw.region_raw
+                 (
+                     region_id        TEXT,
+                     name             TEXT
+                 );
+                 """,
     'inventory_raw': """
                      CREATE TABLE IF NOT EXISTS raw.inventory_raw
                      (
@@ -116,7 +123,7 @@ with DAG(
 ) as dag:
     # Groupe de tâches pour le transfert des tables
     with TaskGroup(group_id='transfer_tables') as transfer_group:
-        tables = ['categories', 'products', 'clients', 'sales', 'inventory']
+        tables = ['categories', 'products', 'clients', 'sales', 'inventory','region']
         for table in tables:
             PythonOperator(
                 task_id=f'transfer_{table}',

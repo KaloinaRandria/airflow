@@ -37,7 +37,7 @@ def clean_and_load(table_name, sql_select, target_schema, target_table):
     engine = create_engine(hook.get_uri())
     
     # 1⃣ Lecture des données sources
-    df = pd.read_sql(sql_select, con=engine)
+    df = pd.read_sql(sql_select, con=hook.get_conn())
     print(f"[{table_name}] before cleaning: {df.shape[0]} rows")
     print(df.dtypes)
 
@@ -142,6 +142,13 @@ def create_dag():
                 method             VARCHAR(50) UNIQUE NOT NULL
             );
             
+            
+            CREATE TABLE IF NOT EXISTS dim_region (
+                region_key   SERIAL PRIMARY KEY,
+                region_id    INT NOT NULL UNIQUE,
+                name  varchar(255) NOT NULL
+            );
+            
             -- Fact table
             CREATE TABLE IF NOT EXISTS fact_sales (
                 sale_key           SERIAL PRIMARY KEY,
@@ -174,6 +181,7 @@ def create_dag():
             ('dim_product', "SELECT * FROM ecommerce_dwh_star.dim_product"),
             ('dim_customer', "SELECT * FROM ecommerce_dwh_star.dim_customer"),
             ('dim_payment_method', "SELECT * FROM ecommerce_dwh_star.dim_payment_method"),
+            ('dim_region', "SELECT * FROM ecommerce_dwh_star.dim_region"),
             ('fact_sales', "SELECT * FROM ecommerce_dwh_star.fact_sales")
         ]
         tasks = {}
@@ -190,7 +198,7 @@ def create_dag():
             )
 
         # 3. Dépendances dimension → fact
-        for dim in ['dim_date', 'dim_time', 'dim_product', 'dim_customer', 'dim_payment_method']:
+        for dim in ['dim_date', 'dim_time', 'dim_product', 'dim_customer', 'dim_payment_method' , 'dim_region']:
             tasks[dim] >> tasks['fact_sales']
 
         # 4. Chaînage global
